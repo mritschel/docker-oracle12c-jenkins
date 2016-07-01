@@ -69,7 +69,7 @@ docker run -v /jenkins:/jenkins -d -p 8080:8080 -p 1521:1521 -p 9090:9090 -h xe 
 
 ### Jenkins
 
-[http://localhost:8080/em/](http://localhost:8080/)
+[http://localhost:8080/](http://localhost:8080/)
 
 The initial password for jekins is stared in /jenkins/secrets/initialAdminPassword
 

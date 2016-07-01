@@ -8,6 +8,7 @@ This Dockerfile is based on Maksym Bilenko's work for [sath89/oracle-12c](https:
 * Oracle Database 12.1.0.2 Standard Edition 2
 	* Apex
 	* Jenkins
+	* Java(TM) SE Runtime Environment (build 1.8.0_91-b14)
 	
 Pull the latest trusted build from [here](https://hub.docker.com/r/mritschel/oracle12c-jenkins/).
 

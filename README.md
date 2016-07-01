@@ -64,13 +64,13 @@ The image defines a volume for ```/jenkins```. You may map this volume for the J
 docker run -v /jenkins:/jenkins -d -p 8080:8080 -p 1521:1521 -p 9090:9090 -h xe --name oracle-jenkins mritschel/oracle12c-jenkins
 ```
 
-### Access Jenkins
+## Access Jenkins
 
 [http://localhost:8080/](http://localhost:8080/)
 
 The initial password for jekins is stared in /jenkins/secrets/initialAdminPassword
 
-### Access APEX
+## Access APEX
 
 [http://localhost:9090/apex/](http://localhost:9090/apex/)
 

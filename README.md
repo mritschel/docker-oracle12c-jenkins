@@ -1,4 +1,6 @@
-# Oracle Jenkins Demo Using An Oracle Database 12c Standard Edition 2
+# Oracle Jenkins Demo 
+## You can use jenkins for oracle PL/SQL unit-tests
+--------------------------------------------------------
 
 ## Content
 

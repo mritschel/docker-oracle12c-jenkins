@@ -5,13 +5,8 @@
 #
 #  Base-information 
 #  ------------------------
-#  localhost:1521:xe	
-#	username: system/oracle
-#  http://localhost:9090/apex 	
-#  workspace: INTERNAL		
-#  user: ADMIN/0Racle$
-#
-#  This Image based on https://github.com/MaksymBilenko/docker-oracle-12c
+# This Image based on https://github.com/MaksymBilenko/docker-oracle-12c
+#  
 ##########################################################################
 FROM sath89/oracle-12c-base
 

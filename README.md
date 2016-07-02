@@ -67,15 +67,19 @@ docker run -v /jenkins:/jenkins -d -p 8080:8080 -p 1521:1521 -p 9090:9090 -h xe 
 
 ## Access
 
+### Enterprise Manager Database Express 12c
+
+[http://localhost:8080/em/](http://localhost:8080/em/)
+
 ### Access Jenkins
 
-[http://localhost:8080/](http://localhost:8080/)
+[http://localhost:9090/](http://localhost:9090/)
 
 The initial password for jekins is stared in /jenkins/secrets/initialAdminPassword
 
 ### Access APEX
 
-[http://localhost:9090/apex/](http://localhost:9090/apex/)
+[http://localhost:8080/apex/](http://localhost:8080/apex/)
 
 Property | Value 
 -------- | -----

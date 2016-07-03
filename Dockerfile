@@ -12,7 +12,7 @@ FROM sath89/oracle-12c-base
 
 MAINTAINER Martin.Ritschel@Trivadis.com
 
-LABEL Basic oracle 12c.R1 with Basenv 16.05 and jenkins
+LABEL Basic oracle 12c.R1 with java and jenkins
 
 # Environment
 ENV DBCA_TOTAL_MEMORY=1024

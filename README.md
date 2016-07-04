@@ -8,11 +8,10 @@ This Dockerfile is based on Maksym Bilenko's work for [sath89/oracle-12c](https:
 
 * Ubuntu 14.04.3 LTS
 * Oracle Database 12.1.0.2 Standard Edition 2
-	* Apex
-	* Jenkins
+	* Apex 4.0.2
 	* Java(TM) SE Runtime Environment (build 1.8.0_91-b14)
 	
-Pull the latest trusted build from [here](https://hub.docker.com/r/mritschel/oracle12c-jenkins/).
+Pull the latest trusted build from [here](https://hub.docker.com/r/mritschel/oracle12c/).
 
 
 ## Installation
@@ -23,13 +22,13 @@ Complete the following steps to create a new container:
 
 1. Pull the image
 
-		docker pull mritschel/oracle12c-jenkins
+		docker pull mritschel/oracle12c
 
 2. Create the container
 
-		docker run -d -p 8080:8080 -p 1521:1521 -p 9090:9090 -h xe --name oracle-jenkins mritschel/oracle12c-jenkins
+		docker run -d -p 8080:8080 -p 1521:1521  -h xe --name oracle mritschel/oracle12c
 		
-3. wait around **15 minutes** until the Oracle Database and APEX is created. Check logs with ```docker logs oracle-jenkins```. The container is ready to use when the last line in the log is ```Oracle started Successfully ! ;)```. The container stops if an error occurs. Check the logs to determine how to proceed.
+3. wait around **15 minutes** until the Oracle Database and APEX is created. Check logs with ```docker logs oracle```. The container is ready to use when the last line in the log is ```Oracle started Successfully ! ;)```. The container stops if an error occurs. Check the logs to determine how to proceed.
 
 
 ### Options
@@ -56,28 +55,15 @@ INSTALL_HOME | ```/tmp/software``` | Install directory
 Here's an example run call amending the SYS/SYSTEM password and DBCA memory settings:
 
 ```
-docker run -e PASS=manager -e DBCA_TOTAL_MEMORY=1536 -d -p 8080:8080 -p 1521:1521 -p 9090:9090 -h xe --name oracle-jenkins mritschel/oracle12c-jenkins
+docker run -e PASS=manager -e DBCA_TOTAL_MEMORY=1536 -d -p 8080:8080 -p 1521:1521  -h xe --name oracle mritschel/oracle12c
 ```
-
-#### Volumes
-
-The image defines a volume for ```/jenkins```. You may map this volume for the JENKINS_HOME. Here's an example using a named volume ```/jenkins```:
-
-```
-docker run -v /jenkins:/jenkins -d -p 8080:8080 -p 1521:1521 -p 9090:9090 -h xe --name oracle-jenkins mritschel/oracle12c-jenkins
-```
+`
 
 ## Access
 
 ### Enterprise Manager Database Express 12c
 
 [http://localhost:8080/em/](http://localhost:8080/em/)
-
-### Access Jenkins
-
-[http://localhost:9090/](http://localhost:9090/)
-
-The initial password for jekins is stared in /jenkins/secrets/initialAdminPassword
 
 ### Access APEX
 
@@ -115,26 +101,26 @@ Complete the following steps to backup the data volume:
 
 1. Stop the container with 
 
-		docker stop oracle-jenkins
+		docker stop oracle12c
 		
 2. Backup the data volume to a compressed file ```xe.tar.gz``` in the current directory with a little help from the ubuntu image
 
-		docker run --rm --volumes-from oracle-jenkins -v $(pwd):/backup ubuntu tar czvf /backup/oracle-jenkins.tar.gz /u01/app/oracle
+		docker run --rm --volumes-from oracle12c -v $(pwd):/backup ubuntu tar czvf /backup/oracle12c.tar.gz /u01/app/oracle
 		
 3. Restart the container
 
-		docker start oracle-jenkins
+		docker start oracle12c
 
 
 ## Issues
 
 Please file your bug reports, enhancement requests, questions and other support requests within [Github's issue tracker](https://help.github.com/articles/about-issues/): 
 
-* [Existing issues](https://github.com/mritschel/docker-oracle12c-jenkins/issues)
-* [submit new issue](https://github.com/mritschel/docker-oracle12c-jenkins/issues/new)
+* [Existing issues](https://github.com/mritschel/docker-oracle12c/issues)
+* [submit new issue](https://github.com/mritschel/docker-oracle12c/issues/new)
 
 ## License
 
-docker-oracle12c-jenkins is licensed under the Apache License, Version 2.0. You may obtain a copy of the License at <http://www.apache.org/licenses/LICENSE-2.0>. 
+docker-oracle12c is licensed under the Apache License, Version 2.0. You may obtain a copy of the License at <http://www.apache.org/licenses/LICENSE-2.0>. 
 
 See [Oracle Database Licensing Information User Manual](http://docs.oracle.com/database/121/DBLIC/editions.htm#DBLIC109) and [Oracle Database 12c Standard Edition 2](https://www.oracle.com/database/standard-edition-two/index.html) for further information.

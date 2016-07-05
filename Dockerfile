@@ -3,7 +3,7 @@
 #           Trivadis GmbH Hamburg
 #  Created: 28.06.2016
 #
-#  Base-information 
+#  Base-information  
 #  ------------------------
 # This Image based on https://github.com/MaksymBilenko/docker-oracle-12c
 #  
@@ -47,7 +47,7 @@ RUN apt-get update  && \
 
 # Copy the installation scripts
 ADD scripts /scripts
-RUN chmod +x /scripts/*
+RUN chmod 777 /scripts/*
 RUN /scripts/install.sh
 
 # Install jenkins
@@ -61,7 +61,7 @@ EXPOSE 8080
 EXPOSE 9090
 
 # Startup script to start the database in container
-ENTRYPOINT ["/scripts/startup.sh"]
+ENTRYPOINT ["/scripts/entrypoint.sh"]
 
 # Define default command.
 CMD ["bash"]

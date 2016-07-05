@@ -1,5 +1,5 @@
 # Oracle database 12c release 1 with Jenkins   
-## You can use jenkins for oracle PL/SQL unit-tests
+## You can use jenkins for oracle PL/SQL unit-tests 
 --------------------------------------------------------
 
 ## Content
@@ -9,9 +9,10 @@ This Dockerfile is based on Maksym Bilenko's work for [sath89/oracle-12c](https:
 * Ubuntu 14.04.3 LTS
 * Oracle Database 12.1.0.2 Standard Edition 2
 	* Apex 4.0.2
+	* Jenkins 2
 	* Java(TM) SE Runtime Environment (build 1.8.0_91-b14)
 	
-Pull the latest trusted build from [here](https://hub.docker.com/r/mritschel/oracle12c/).
+Pull the latest trusted build from [here](https://hub.docker.com/r/mritschel/oracle12c-jenkins/).
 
 
 ## Installation
@@ -22,11 +23,11 @@ Complete the following steps to create a new container:
 
 1. Pull the image
 
-		docker pull mritschel/oracle12c
+		docker pull mritschel/oracle12c-jenkins
 
 2. Create the container
 
-		docker run -d -p 8080:8080 -p 1521:1521  -h xe --name oracle mritschel/oracle12c
+		docker run -d -p 8080:8080 -p 1521:1521  -h xe --name oracle mritschel/oracle12c-jenkins
 		
 3. wait around **15 minutes** until the Oracle Database and APEX is created. Check logs with ```docker logs oracle```. The container is ready to use when the last line in the log is ```Oracle started Successfully ! ;)```. The container stops if an error occurs. Check the logs to determine how to proceed.
 
@@ -55,7 +56,7 @@ INSTALL_HOME | ```/tmp/software``` | Install directory
 Here's an example run call amending the SYS/SYSTEM password and DBCA memory settings:
 
 ```
-docker run -e PASS=manager -e DBCA_TOTAL_MEMORY=1536 -d -p 8080:8080 -p 1521:1521  -h xe --name oracle mritschel/oracle12c
+docker run -e PASS=manager -e DBCA_TOTAL_MEMORY=1536 -d -p 8080:8080 -p 1521:1521  -h xe --name oracle mritschel/oracle12c-jenkins
 ```
 `
 

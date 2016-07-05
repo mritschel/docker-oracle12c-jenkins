@@ -1,48 +1,80 @@
 #!/bin/bash
+
 set -e
+source /scripts/colorecho
 
-# Add oracle to path
+
+alert_log="$ORACLE_BASE/diag/rdbms/$ORACLE_SID/$ORACLE_SID/trace/alert_$ORACLE_SID.log"
+listener_log="$ORACLE_BASE/diag/tnslsnr/$HOSTNAME/listener/trace/listener.log"
+pfile=$ORACLE_HOME/dbs/init$ORACLE_SID.ora
+
 export PATH=${ORACLE_HOME}/bin:$PATH
-if grep -q "PATH" ~/.bashrc
-then
-    echo "Found PATH definition in ~/.bashrc"
+
+# monitor $logfile
+monitor() {
+    tail -F -n 0 $1 | while read line; do echo -e "$2: $line"; done
+}
+
+
+if [ "$1" = 'listener' ]; then
+
+	trap "echo_red 'Caught SIGTERM signal, shutting down listener...'; lsnrctl stop" SIGTERM
+	trap "echo_red 'Caught SIGINT signal, shutting down listener...'; lsnrctl stop" SIGINT
+	monitor $listener_log listener &
+	MON_LSNR_PID=$!
+	lsnrctl start
+	wait %1
+elif [ "$1" = 'database' ]; then
+
+	trap_db() {
+		trap "echo_red 'Caught SIGTERM signal, shutting down...'; stop" SIGTERM;
+		trap "echo_red 'Caught SIGINT signal, shutting down...'; stop" SIGINT;
+	}
+
+	start_db() {
+		echo_yellow "Starting listener..."
+		monitor $listener_log listener &
+		lsnrctl start | while read line; do echo -e "lsnrctl: $line"; done
+		MON_LSNR_PID=$!		
+		echo_yellow "Starting database..."
+		trap_db
+		monitor $alert_log alertlog &
+		MON_ALERT_PID=$!
+		sqlplus / as sysdba <<-EOF |
+			pro Starting with pfile='$pfile' ...
+			startup pfile='$pfile';
+			exec dbms_xdb.sethttpport(8080);
+			alter system register;
+			exit 0
+		EOF
+		while read line; do echo -e "sqlplus: $line"; done
+		wait $MON_ALERT_PID
+	}
+
+	stop() {
+        trap '' SIGINT SIGTERM
+		shu_immediate
+		echo_yellow "Shutting down listener..."
+		lsnrctl stop | while read line; do echo -e "lsnrctl: $line"; done
+		kill $MON_ALERT_PID $MON_LSNR_PID
+		exit 0
+	}
+
+	shu_immediate() {
+		ps -ef | grep ora_pmon | grep -v grep > /dev/null && \
+		echo_yellow "Shutting down the database..." && \
+		sqlplus / as sysdba <<-EOF |
+			set echo on
+			shutdown immediate;
+			exit 0
+		EOF
+		while read line; do echo -e "sqlplus: $line"; done
+	}
+
+	echo "Checking shared memory..."
+	df -h | grep "Mounted on" && df -h | egrep --color "^.*/dev/shm" || echo "Shared memory is not mounted."
+	[ -f $pfile ] && start_db
+
 else
-	echo "Extending PATH in in ~/.bashrc"
-	printf "\nPATH=${PATH}\n" >> ~/.bashrc
+	exec "$@"
 fi
-
-echo "Starting tnslsnr"
-su oracle -c "${ORACLE_HOME}/bin/lsnrctl start"
-
-echo "Starting database"
-su oracle -c 'echo startup\; | $ORACLE_HOME/bin/sqlplus -S / as sysdba'
-
-echo 'Starting web management console'
-su oracle -c 'echo EXEC DBMS_XDB.sethttpport\(8080\)\; | ${ORACLE_HOME}/bin/sqlplus -s -l / as sysdba'
-echo "Web management console initialized. Please visit"
-echo "   - http://localhost:8080/em"
-echo "   - http://localhost:8080/apex"
-
-echo "Database init..."
-for f in /entrypoint-initdb.d/*; do
-    case "$f" in
-        *.sh)  echo "$0: running $f"; . "$f" ;;
-        *.sql) echo "$0: running $f"; su oracle -c "echo \@$f\; | ${ORACLE_HOME}/bin/sqlplus -S / as sysdba" ;;
-        *)     echo "No volume sql script, ignoring $f" ;;
-    esac
-    echo
-done
-
-echo "Starting jenkins on 9090"
-java -jar /opt/jenkins.war --httpPort=9090 > /tmp/jenkis.log 2>&1 &
-echo "Jenkins console initialized. Please visit"
-echo "   - http://localhost:9090"
-
-
-echo "End init."
-echo ""
-echo "---------------------------------------------------------------------------"
-echo "Oracle started Successfully !"
-while true; do
-    sleep 1m
-done;

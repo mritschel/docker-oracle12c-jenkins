@@ -9,7 +9,7 @@ This Dockerfile is based on Maksym Bilenko's work for [sath89/oracle-12c](https:
 * Ubuntu 14.04.3 LTS
 * Oracle Database 12.1.0.2 Standard Edition 2
 	* Apex 4.0.2
-	* Jenkins 2
+	* Jenkins 2.11
 	* Java(TM) SE Runtime Environment (build 1.8.0_91-b14)
 	
 Pull the latest trusted build from [here](https://hub.docker.com/r/mritschel/oracle12c-jenkins/).
@@ -62,6 +62,13 @@ docker run -e PASS=manager -e DBCA_TOTAL_MEMORY=1536 -d -p 8080:8080 -p 1521:152
 
 ## Access
 
+### Jenkins
+
+[http://localhost:9090/ ](http://localhost:9090/)
+
+Jenkins initial setup is required. An admin user has been created and a password generated.
+This may also be found at: /jenkins/secrets/initialAdminPassword
+
 ### Enterprise Manager Database Express 12c
 
 [http://localhost:8080/em/](http://localhost:8080/em/)
@@ -74,7 +81,7 @@ Property | Value
 -------- | -----
 Workspace | INTERNAL
 User | ADMIN
-Password | Oracle12c!
+Password | 0Racle$
 
 ### Database Connections
 

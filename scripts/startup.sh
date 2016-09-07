@@ -3,6 +3,25 @@
 set -e
 source /scripts/colorecho
 
+echo_yellow "Set hostname for the listener..."
+# listener and tnsnames modify 
+STRSEARCH="<HOSTNAME>"
+STRREPLACE=$HOSTNAME
+find "${ORACLE_HOME}/network/admin" -type f -name '*.ora' -print | while read i
+do
+   cp "$i" "$i.tmp"
+   if [ -f "$i.tmp" ]; then
+      #echo "s/$STRSEARCH/$STRREPLACE/g"
+      sed "s/$STRSEARCH/$STRREPLACE/g" "$i" > "$i.new"
+      if [ -f "$i.new" ]; then
+          mv "$i.new" "$i"
+      else
+         echo "$i.new doesn't exist"
+      fi
+   else
+      echo "$i.tmp wasn't created"
+   fi
+done
 
 alert_log="$ORACLE_BASE/diag/rdbms/$ORACLE_SID/$ORACLE_SID/trace/alert_$ORACLE_SID.log"
 listener_log="$ORACLE_BASE/diag/tnslsnr/$HOSTNAME/listener/trace/listener.log"
@@ -17,7 +36,6 @@ monitor() {
 
 
 if [ "$1" = 'listener' ]; then
-
 	trap "echo_red 'Caught SIGTERM signal, shutting down listener...'; lsnrctl stop" SIGTERM
 	trap "echo_red 'Caught SIGINT signal, shutting down listener...'; lsnrctl stop" SIGINT
 	monitor $listener_log listener &

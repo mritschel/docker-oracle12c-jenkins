@@ -50,19 +50,6 @@ su oracle -c 'echo -e "${ORACLE_HOME}\n\n" | $ORACLE_HOME/bin/sqlplus -S / as sy
 su oracle -c 'echo -e "ALTER USER ANONYMOUS ACCOUNT UNLOCK;" | $ORACLE_HOME/bin/sqlplus -S / as sysdba > /dev/null'
 su oracle -c 'echo -e "${ORACLE_HOME}\n\n" | $ORACLE_HOME/bin/sqlplus -S / as sysdba @apxxepwd ${APEX_PASS} > /dev/null'
 
-#move the apex instalations files to ${ORACLE_HOME}
-echo "Move the apex 5.0.3 instalations files to oracle_home"
-mv ${ORACLE_HOME}/apex ${ORACLE_HOME}/apex_old
-mv ${INSTALL_HOME}/apex ${ORACLE_HOME}
-chown -R oracle:dba ${ORACLE_HOME}/apex
-chmod -R 775 ${ORACLE_HOME}/apex
-
-#update the Apex console
-echo "Update Apex console"
-cd $ORACLE_HOME/apex
-su oracle -c '$ORACLE_HOME/bin/sqlplus -S / as sysdba @$ORACLE_HOME/apex/apexins.sql SYSAUX SYSAUX TEMP /i/ > /dev/null'
-su oracle -c '$ORACLE_HOME/bin/sqlplus -S / as sysdba @$ORACLE_HOME/apex/apxldimg.sql $ORACLE_HOME > /dev/null' 
-
 echo "Set NAMES.DEFAULT_DOMAIN for the sqlnet..."
 # sqlnet modify 
 STRSEARCH="NAMES.DEFAULT_DOMAIN"
@@ -86,5 +73,3 @@ done
 # clearing
 echo "Clearing"
 rm /scripts/install.sh
-rm $INSTALL_HOME/apex_5.0.3_1.zip
-rm $INSTALL_HOME/apex_5.0.3_2.zip

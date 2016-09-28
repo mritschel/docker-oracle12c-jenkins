@@ -3,18 +3,19 @@
 set -e
 source /scripts/colorecho
 
-echo_yellow "Set hostname for the listener..."
-# listener and tnsnames modify 
+echo_green "Set hostname for the listener..."
+# Modify listener.ora  
 STRSEARCH="<HOSTNAME>"
 STRREPLACE=$HOSTNAME
-find "${ORACLE_HOME}/network/admin" -type f -name '*.ora' -print | while read i
+find "${ORACLE_BASE}/network/admin" -type f -name 'listener.ora' -print | while read i
 do
-   cp "$i" "$i.tmp"
+   #cp "$i" "$i.tmp"
    if [ -f "$i.tmp" ]; then
-      #echo "s/$STRSEARCH/$STRREPLACE/g"
+      echo "s/$STRSEARCH/$STRREPLACE/g"
       sed "s/$STRSEARCH/$STRREPLACE/g" "$i" > "$i.new"
       if [ -f "$i.new" ]; then
           mv "$i.new" "$i"
+          
       else
          echo "$i.new doesn't exist"
       fi
@@ -22,6 +23,24 @@ do
       echo "$i.tmp wasn't created"
    fi
 done
+
+echo_green "Checking tnsnames.ora"
+if [ -f "${ORACLE_HOME}/network/admin/tnsnames.ora" ] 
+then 
+	echo "tnsnames.ora found." 
+	rm -f ${ORACLE_HOME}/network/admin/tnsnames.ora
+fi 
+echo_green "Creating tnsnames.ora"  
+printf "${ORACLE_SID} = 
+   (DESCRIPTION = 
+      (ADDRESS = (PROTOCOL = TCP)
+      (HOST = $HOSTNAME) 
+      (PORT = 1521)) 
+      (CONNECT_DATA = 
+         (SERVICE_NAME = ${SERVICE_NAME})
+      )
+   )\n" > ${ORACLE_HOME}/network/admin/tnsnames.ora 
+chown -R oracle:dba ${ORACLE_HOME}/network/admin/tnsnames.ora
 
 alert_log="$ORACLE_BASE/diag/rdbms/$ORACLE_SID/$ORACLE_SID/trace/alert_$ORACLE_SID.log"
 listener_log="$ORACLE_BASE/diag/tnslsnr/$HOSTNAME/listener/trace/listener.log"
@@ -50,11 +69,11 @@ elif [ "$1" = 'database' ]; then
 	}
 
 	start_db() {
-		echo_yellow "Starting listener..."
+		echo_green "Starting listener..."
 		monitor $listener_log listener &
 		lsnrctl start | while read line; do echo -e "lsnrctl: $line"; done
 		MON_LSNR_PID=$!		
-		echo_yellow "Starting database..."
+		echo_green "Starting database..."
 		trap_db
 		monitor $alert_log alertlog &
 		MON_ALERT_PID=$!
@@ -72,7 +91,7 @@ elif [ "$1" = 'database' ]; then
 	stop() {
         trap '' SIGINT SIGTERM
 		shu_immediate
-		echo_yellow "Shutting down listener..."
+		echo_green "Shutting down listener..."
 		lsnrctl stop | while read line; do echo -e "lsnrctl: $line"; done
 		kill $MON_ALERT_PID $MON_LSNR_PID
 		exit 0

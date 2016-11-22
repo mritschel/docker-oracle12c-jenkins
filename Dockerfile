@@ -9,10 +9,9 @@
 ##########################################################################
 FROM mritschel/oraclebase
 
-MAINTAINER Martin.Ritschel@Trivadis.com 
+MAINTAINER Martin.Ritschel@Trivadis.com
 
-LABEL Basic oracle 12c.R1 with java and jenkins
-
+LABEL Basic oracle 12c.R1 with java and perl
 
 # Environment
 ENV DBCA_TOTAL_MEMORY=1024
@@ -31,7 +30,6 @@ ENV INSTALL_HOME=$ORACLE_BASE/install
 ENV SCRIPTS_HOME=$ORACLE_BASE/scripts
 ENV JENKINS_HOME=/jenkins 
 
-
 # Fix sh
 #RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
@@ -40,6 +38,7 @@ USER root
 RUN yum -y install unzip wget zip gcc ksh && \
     yum -y install java-1.7.0-openjdk-devel && \
     yum clean all
+    
     
 # Copy the installation files
 ADD software $INSTALL_HOME
@@ -53,15 +52,15 @@ RUN chown -R oracle:dba $INSTALL_HOME/*
 RUN chmod -R 777 $SCRIPTS_HOME/*
 RUN chown -R oracle:dba $SCRIPTS_HOME/* 
 
+# start the installation scripts
+USER oracle
+RUN $SCRIPTS_HOME/install.sh
 
 # Install jenkins
 VOLUME ["/jenkins"]
 ADD software/jenkins.war /opt/jenkins.war 
 RUN chmod 644 /opt/jenkins.war 
 
-# start the installation scripts
-USER oracle
-RUN $SCRIPTS_HOME/install.sh
 
 # Ports 
 EXPOSE 1521 
@@ -69,7 +68,8 @@ EXPOSE 8080
 EXPOSE 9090
 
 # Startup script to start the database in container
-ENTRYPOINT ["$SCRIPTS_HOME/entrypoint.sh"]
+ENTRYPOINT ["/u01/app/oracle/scripts/entrypoint.sh"]
 
 # Define default command.
 #CMD ["bash"]
+

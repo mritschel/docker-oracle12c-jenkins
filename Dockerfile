@@ -52,14 +52,15 @@ RUN chown -R oracle:dba $INSTALL_HOME/*
 RUN chmod -R 777 $SCRIPTS_HOME/*
 RUN chown -R oracle:dba $SCRIPTS_HOME/* 
 
-# start the installation scripts
-USER oracle
-RUN $SCRIPTS_HOME/install.sh
 
 # Install jenkins
 VOLUME ["/jenkins"]
 ADD software/jenkins.war /opt/jenkins.war 
 RUN chmod 644 /opt/jenkins.war 
+
+# start the installation scripts
+USER oracle
+RUN $SCRIPTS_HOME/install.sh
 
 
 # Ports 

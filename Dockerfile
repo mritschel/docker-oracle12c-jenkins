@@ -38,7 +38,7 @@ ENV JENKINS_HOME=/jenkins
 # Installing the required software 
 USER root
 RUN yum -y install unzip wget zip gcc ksh && \
-    yum install java-1.7.0-openjdk-devel && \
+    yum -y install java-1.7.0-openjdk-devel && \
     yum clean all
     
 # Copy the installation files

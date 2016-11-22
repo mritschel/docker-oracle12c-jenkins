@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-source /scripts/colorecho
+source $SCRIPTS_HOME/colorecho
 
 # Add oracle to path
-export PATH=${ORACLE_HOME}/bin:$PATH
+export PATH=$ORACLE_HOME/bin:$PATH
 if grep -q "PATH" ~/.bashrc
 then
     echo "Found PATH definition in ~/.bashrc"
@@ -26,7 +26,7 @@ echo_yellow "-------------------------------------------------------------------
 echo "\n \n \n"
 echo_yellow  "Starting listener and database"
 echo_yellow "---------------------------------------------------------------------------"
-su oracle -c '/scripts/startup.sh database'
+$SCRIPTS_HOME/startup.sh database
 echo_yellow "Database and Web management console initialized. Please visit"
 echo_yellow "   - http://localhost:8080/em"
 echo_yellow "   - http://localhost:8080/apex"

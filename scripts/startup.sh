@@ -1,21 +1,28 @@
 #!/bin/bash
-
+##########################################################################
+#  Author   M. Ritschel 
+#           Trivadis GmbH Hamburg
+#  Created: 28.09.2016 
+#  Base-information 
+#  ------------------------
+# Startup-Script for the Trivadis Jenkins docker images
+#  
+##########################################################################
 set -e
-source /scripts/colorecho
+source $SCRIPTS_HOME/colorecho
 
 echo_green "Set hostname for the listener..."
 # Modify listener.ora  
 STRSEARCH="<HOSTNAME>"
 STRREPLACE=$HOSTNAME
-find "${ORACLE_BASE}/network/admin" -type f -name 'listener.ora' -print | while read i
+find "$ORACLE_HOME/network/admin" -type f -name 'listener.ora' -print | while read i
 do
    #cp "$i" "$i.tmp"
    if [ -f "$i.tmp" ]; then
       echo "s/$STRSEARCH/$STRREPLACE/g"
       sed "s/$STRSEARCH/$STRREPLACE/g" "$i" > "$i.new"
       if [ -f "$i.new" ]; then
-          mv "$i.new" "$i"
-          
+          mv "$i.new" "$i"          
       else
          echo "$i.new doesn't exist"
       fi
@@ -25,13 +32,13 @@ do
 done
 
 echo_green "Checking tnsnames.ora"
-if [ -f "${ORACLE_HOME}/network/admin/tnsnames.ora" ] 
+if [ -f "$ORACLE_HOME/network/admin/tnsnames.ora" ] 
 then 
 	echo "tnsnames.ora found." 
-	rm -f ${ORACLE_HOME}/network/admin/tnsnames.ora
+	rm -f $ORACLE_HOME/network/admin/tnsnames.ora
 fi 
 echo_green "Creating tnsnames.ora"  
-printf "${ORACLE_SID} = 
+printf "$ORACLE_SID = 
    (DESCRIPTION = 
       (ADDRESS = (PROTOCOL = TCP)
       (HOST = $HOSTNAME) 
@@ -39,21 +46,20 @@ printf "${ORACLE_SID} =
       (CONNECT_DATA = 
          (SERVICE_NAME = ${SERVICE_NAME})
       )
-   )\n" > ${ORACLE_HOME}/network/admin/tnsnames.ora 
-chown -R oracle:dba ${ORACLE_HOME}/network/admin/tnsnames.ora
+   )\n" > $ORACLE_HOME/network/admin/tnsnames.ora 
+chown -R oracle:dba $ORACLE_HOME/network/admin/tnsnames.ora
 
 alert_log="$ORACLE_BASE/diag/rdbms/$ORACLE_SID/$ORACLE_SID/trace/alert_$ORACLE_SID.log"
 listener_log="$ORACLE_BASE/diag/tnslsnr/$HOSTNAME/listener/trace/listener.log"
-pfile=$ORACLE_HOME/dbs/init$ORACLE_SID.ora
+pfile=$ORACLE_HOME/dbs/spfile$ORACLE_SID.ora
 
-export PATH=${ORACLE_HOME}/bin:$PATH
+export PATH=$ORACLE_HOME/bin:$PATH
 
 # monitor $logfile
 monitor() {
     tail -F -n 0 $1 | while read line; do echo -e "$2: $line"; done
 }
-
-
+ 
 if [ "$1" = 'listener' ]; then
 	trap "echo_red 'Caught SIGTERM signal, shutting down listener...'; lsnrctl stop" SIGTERM
 	trap "echo_red 'Caught SIGINT signal, shutting down listener...'; lsnrctl stop" SIGINT
@@ -66,7 +72,7 @@ elif [ "$1" = 'database' ]; then
 	trap_db() {
 		trap "echo_red 'Caught SIGTERM signal, shutting down...'; stop" SIGTERM;
 		trap "echo_red 'Caught SIGINT signal, shutting down...'; stop" SIGINT;
-	}
+	}  
 
 	start_db() {
 		echo_green "Starting listener..."
@@ -79,13 +85,14 @@ elif [ "$1" = 'database' ]; then
 		MON_ALERT_PID=$!
 		sqlplus / as sysdba <<-EOF |
 			pro Starting with pfile='$pfile' ...
-			startup pfile='$pfile';
+			startup 
 			exec dbms_xdb.sethttpport(8080);
 			alter system register;
 			exit 0
 		EOF
 		while read line; do echo -e "sqlplus: $line"; done
 		wait $MON_ALERT_PID
+		
 	}
 
 	stop() {

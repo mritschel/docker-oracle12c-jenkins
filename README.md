@@ -4,13 +4,16 @@
 
 ## Content
 
-This Dockerfile is based on Maksym Bilenko's work for [sath89/oracle-12c](https://hub.docker.com/r/sath89/oracle-12c/). The resulting image contains the following:
+This Dockerfile is based on my work for [https://hub.docker.com/r/mritschel/oraclebase]. The version is based on the image with Oracle Enterprise Linux 7.1 and Oracle Database 12c R1.
+The resulting image contains the following:
 
-* Ubuntu 14.04.3 LTS
-* Oracle Database 12.1.0.2 Standard Edition 2
-	* Apex 4.0.2
-	* Jenkins 2.11
-	* Java(TM) SE Runtime Environment (build 1.8.0_91-b14)
+
+* Oracle Enterprise Linux 7.1
+   * Oracle Database 12.1.0.2 Enterprise Edition 
+      * Apex 5.0.3 
+   * Java(TM) SE Runtime Environment (build 1.8.0_91-b14)
+   * Perl 5.14.1 me Environment (build 1.8.0_91-b14)
+   * Jenkins 2
 	
 Pull the latest trusted build from [here](https://hub.docker.com/r/mritschel/oracle12c-jenkins/).
 
@@ -39,19 +42,20 @@ Complete the following steps to create a new container:
 You may set the environment variables in the docker run statement to configure the container setup process. The following table lists all environment variables with its default values:
 
 Environment variable | Default value | Comments
+Environment variable | Default value | Comments
 -------------------- | ------------- | --------
 DBCA_TOTAL_MEMORY | ```1024``` | Keep in mind that DBCA fails if you set this value too low
 ORACLE_BASE | ```/u01/app/oracle``` | Oracle Base directory
-ORACLE_HOME | ```$ORACLE_BASE/product/12.1.0/xe``` | Oracle Home directory
+ORACLE_HOME | ```/u01/app/oracle/product/12.1.0.2/dbhome_1 ``` | Oracle Home directory
 ORACLE_DATA | ```/u00/app/oracle/oradata``` | Oracle Data directory
 ORACLE_HOME_LISTNER | ```$ORACLE_HOME``` | Oracle Home directory
-SERVICE_NAME | ```xe.local.com``` | Oracle service name
+SERVICE_NAME | ```xe.oracle.docker``` | Oracle service name
 PATH | ```$ORACLE_HOME/bin:$PATH``` | Path
 NLS_DATE_FORMAT | ```DD.MM.YYYY\ HH24:MI:SS``` | Oracle NLS date format
-ORACLE_SID | ```xe``` | The Oracle SID
-APEX_PASS | ```0Racle$``` | Set a different initial APEX ADMIN password (the one which must be changed on first login)
-PASS | ```oracle``` | Password for SYS and SYSTEM
-INSTALL_HOME | ```/tmp/software``` | Install directory
+ORACLE_SID | ```ORCLCDB``` | The Oracle SID
+INSTALL_HOME | ```/u01/app/oracle/install``` | Install directory 
+SCRIPTS_HOME | ```/u01/app/oracle/scripts``` | Scripts directory 
+
 
 Here's an example run call amending the SYS/SYSTEM password and DBCA memory settings:
 
@@ -101,7 +105,11 @@ User | Password
 system | oracle
 sys | oracle
  
-
+## Access Linux
+User | Password 
+-------- | -----
+root | geheim
+oracle | geheim
 
 ## Backup
 

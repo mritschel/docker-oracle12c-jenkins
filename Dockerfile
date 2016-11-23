@@ -25,17 +25,19 @@ ENV NLS_DATE_FORMAT=DD.MM.YYYY\ HH24:MI:SS
 ENV ORACLE_SID=xe
 ENV APEX_PASS=0Racle$
 ENV PASS=oracle  
+ENV LINUX_ROOT=geheim
+ENV LINUX_ORACLE=geheim
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ENV INSTALL_HOME=$ORACLE_BASE/install
 ENV SCRIPTS_HOME=$ORACLE_BASE/scripts
-ENV JENKINS_HOME=/jenkins 
+ENV JENKINS_HOME=$ORACLE_BASE/jenkins 
 
 # Fix sh
 #RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # Installing the required software 
 USER root
-RUN yum -y install unzip wget zip gcc ksh && \
+RUN yum -y install unzip wget zip gcc ksh sudo && \
     yum -y install java-1.7.0-openjdk-devel && \
     yum clean all
     
@@ -52,11 +54,13 @@ RUN chown -R oracle:dba $INSTALL_HOME/*
 RUN chmod -R 777 $SCRIPTS_HOME/*
 RUN chown -R oracle:dba $SCRIPTS_HOME/* 
 
-
 # Install jenkins
 VOLUME ["/jenkins"]
-ADD software/jenkins.war /opt/jenkins.war 
-RUN chmod 644 /opt/jenkins.war 
+RUN mkdir $JENKINS_HOME
+ADD software/jenkins.war $JENKINS_HOME/jenkins.war 
+RUN chown -R oracle:dba $JENKINS_HOME 
+RUN chmod -R 777 $JENKINS_HOME 
+
 
 # start the installation scripts
 USER oracle

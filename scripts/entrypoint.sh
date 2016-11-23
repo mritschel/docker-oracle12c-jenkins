@@ -15,7 +15,7 @@ fi
 
 echo_yellow "Starting jenkins on 9090"
 echo_yellow "---------------------------------------------------------------------------"
-java -jar /opt/jenkins.war --httpPort=9090 > /var/log/jenkis.log 2>&1 &
+java -jar $JENKINS_HOME/jenkins.war --httpPort=9090 > $JENKINS_HOME/jenkis.log 2>&1 &
 echo_yellow "Jenkins console initialized. Please visit"
 echo_yellow "   - http://localhost:9090"
 echo_yellow "\n"

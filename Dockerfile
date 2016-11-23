@@ -43,6 +43,10 @@ RUN yum -y install unzip wget zip gcc ksh && \
 # Copy the installation files
 ADD software $INSTALL_HOME
 ADD scripts  $SCRIPTS_HOME
+RUN unzip $INSTALL_HOME/apex_5.0.3_1.zip -d $INSTALL_HOME >/dev/null 2>&1
+RUN rm -f $INSTALL_HOME/apex_5.0.3_1.zip 
+RUN unzip $INSTALL_HOME/apex_5.0.3_2.zip -d $INSTALL_HOME >/dev/null 2>&1
+RUN rm -f $INSTALL_HOME/apex_5.0.3_2.zip 
 RUN chmod -R 777 $INSTALL_HOME/*
 RUN chown -R oracle:dba $INSTALL_HOME/* 
 RUN chmod -R 777 $SCRIPTS_HOME/*

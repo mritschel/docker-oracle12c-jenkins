@@ -30,10 +30,11 @@ Complete the following steps to create a new container:
 
 2. Create the container
 
-		docker run -d -p 8080:8080 -p 1521:1521  -h xe --name oracle mritschel/oracle12c-jenkins
+		docker run -d -p 9090:9090 -p 8080:8080 -p 1521:1521  -h xe --name oracle mritschel/oracle12c-jenkins
 		
-3. wait around **15 minutes** until the Oracle Database and APEX is created. Check logs with ```docker logs oracle```. The container is ready to use when the last line in the log is ```Oracle started Successfully ! ;)```. The container stops if an error occurs. Check the logs to determine how to proceed.
-
+3. wait around **5 minutes** until the Oracle Database and APEX is created. Check logs with ```docker logs oracle-apex```. 
+   The container is ready to uAll entries from the Alert.log and Listener.log are entered into the container logfile.
+   The container stops if an error occurs. Check the logs to determine how to proceed.
 
 ### Options
 
@@ -41,7 +42,6 @@ Complete the following steps to create a new container:
 
 You may set the environment variables in the docker run statement to configure the container setup process. The following table lists all environment variables with its default values:
 
-Environment variable | Default value | Comments
 Environment variable | Default value | Comments
 -------------------- | ------------- | --------
 DBCA_TOTAL_MEMORY | ```1024``` | Keep in mind that DBCA fails if you set this value too low
@@ -64,6 +64,15 @@ docker run -e PASS=manager -e DBCA_TOTAL_MEMORY=1536 -d -p 8080:8080 -p 1521:152
 ```
 `
 
+#### Volumes
+
+The image defines a volume for ```/jenkins```. You may map this volume for the jenkins_home. Here's an example using a named volume ```/jenkins```:
+
+```
+docker run -v /jenkins:/jenkins -d -p 9090:9090 -p 8080:8080 -p 1521:1521 -h xe --name oracle-apex mritschel/oracle12c-apex
+```
+
+
 ## Access
 
 ### Jenkins
@@ -73,9 +82,6 @@ docker run -e PASS=manager -e DBCA_TOTAL_MEMORY=1536 -d -p 8080:8080 -p 1521:152
 Jenkins initial setup is required. An admin user has been created and a password generated.
 This may also be found at: /jenkins/secrets/initialAdminPassword
 
-### Enterprise Manager Database Express 12c
-
-[http://localhost:8080/em/](http://localhost:8080/em/)
 
 ### Access APEX
 
@@ -85,7 +91,7 @@ Property | Value
 -------- | -----
 Workspace | INTERNAL
 User | ADMIN
-Password | 0Racle$
+Password | Manager_12C
 
 ### Database Connections
 

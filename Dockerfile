@@ -4,10 +4,10 @@
 #  Created: 09.03.2017 
 #  Base-information 
 #  ------------------------
-# This Image based on https://hub.docker.com/r/mritschel/oraclebase/
+# This Image based on https://hub.docker.com/r/mritschel/oracle12cr1_base/
 #  
 ##########################################################################
-FROM mritschel/oraclebase
+FROM mritschel/oracle12cr1_base
 
 MAINTAINER Martin.Ritschel@Trivadis.com
 

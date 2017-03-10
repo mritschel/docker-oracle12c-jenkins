@@ -1,7 +1,11 @@
-# Oracle Linunx with Oracle Database 12c release 1 installation
--------------------------------------------------------------------------
+# Oracle database 12c release 1 with Jenkins   
+## You can use jenkins for oracle PL/SQL unit-tests 
+--------------------------------------------------------
 
 ## Content
+
+This Dockerfile is based on my work for [https://hub.docker.com/r/mritschel/oraclebase]. The version is based on the image with Oracle Enterprise Linux 7.3 and Oracle Database 12c R1.
+The resulting image contains the following:
 
 * Oracle Linux Server release 7.3
 * Oracle Database 12.1.0.2 Standard Edition 

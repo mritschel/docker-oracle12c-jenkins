@@ -4,7 +4,7 @@
 
 ## Content
 
-This Dockerfile is based on my work for [https://hub.docker.com/r/mritschel/oraclebase]. The version is based on the image with Oracle Enterprise Linux 7.3 and Oracle Database 12c R1.
+This Dockerfile is based on my work for [https://hub.docker.com/r/mritschel/oracle12cr1_base]. The version is based on the image with Oracle Enterprise Linux 7.3 and Oracle Database 12c R1.
 The resulting image contains the following:
 
 * Oracle Linux Server release 7.3
